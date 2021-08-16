@@ -46,7 +46,8 @@ class GoldStars {
       'tables' : document.querySelectorAll('.star-table'),
       'nav' : document.querySelector('nav'),
       'mainExplosion' : document.querySelector('.explosion-svg'),
-      'crashClapWrap' : document.querySelector('#crashClap-wrap')
+      'crashClapWrap' : document.querySelector('#crashClap-wrap'),
+      'loading' : document.querySelector('#loading')
     }
 
     this.e = {...this.e, ...starPageElements};
@@ -325,11 +326,9 @@ class GoldStars {
     }
   }
 
-  delayedBoobaExplosion(recordTr, delay) {
-    setTimeout(() => {
-      this.playSound('booba');
-      this.showExplosion(recordTr);
-    }, delay);
+  boobaExplosion(tr) {
+    this.playSound('booba');
+    this.showExplosion(tr);
   }
 
   showLoading() {
@@ -357,7 +356,7 @@ class GoldStars {
     this.closePopup();
     this.hideLoading();
     this.scrollToPersonIfNeeded(newRecordTr);
-    this.delayedBoobaExplosion(newRecordTr, 250);
+    this.boobaExplosion(newRecordTr);
   }
 
   updateRemoveListenerData(recordTr, data) {
@@ -374,7 +373,7 @@ class GoldStars {
     this.rePaintRecord(recordTr, data, false);
     this.closePopup();
     this.hideLoading();
-    this.delayedBoobaExplosion(recordTr, 250);
+    this.boobaExplosion(recordTr);
     this.updateRemoveListenerData(recordTr, data);
   }
 
@@ -790,9 +789,7 @@ class GoldStars {
     item.amount++;
     amount.innerText = 'x ' + item.amount;
     this.showPlusOrMinusOne(true, tr);
-
-    this.playSound('booba');
-    this.showExplosion(tr);
+    this.boobaExplosion(tr);
 
     if (window.matchMedia('(min-width: 1200px)').matches) {
       this.trConfetti(tr);
