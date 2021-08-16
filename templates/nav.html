@@ -1,0 +1,57 @@
+<nav>
+	<a id="header" href="{{baseURL}}" title="Homepage">
+		{% if starPage %}
+			<img src="" alt="Header" class="header">
+			<img src="" alt="Header Small" class="header-sm">
+		{% else %}
+			{% include 'header.svg' %}
+			{% include 'header-sm.svg' %}
+		{% endif %}
+	</a>
+
+	<div id="profile">
+		{% if loggedIn %}
+			<img src="{{profile_data['profile_pic']}}" id="profile-pic">
+			<div id="profile-text-wrapper">
+				<span id="display-name">{{profile_data['display_name']}}</span>
+				<div id="logout-menu-wrapper">
+					<a id="logout" href="{{loginOrOutUrl}}">Logout</a>
+					<div id="menu-wrapper">
+						<div id="menu" class="display-none">
+							{% if streamer == None or profile_data['display_name'].lower() != streamer.lower() %}
+								<a href="{{baseURL}}/{{profile_data['display_name']}}" class="menu-item">My Starpage</a>
+								<div class="menu-divider"></div>
+							{% endif %}
+							<a id="add-person" href="#" class="menu-item">Add Person</a>
+							<div class="menu-divider"></div>
+							<h1 class="menu-title">Volume</h1>
+							<div id="volume-wrapper" class="menu-item-wrapper">
+								<button id="volume-play-button" class="no-btn-style">
+									<svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="white" d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z" class=""></path></svg>
+								</button>
+								<input type="range" id="volume" name="volume" min="0" max="100" step="1">
+								<input id="volume-toggle" class="apple-switch" type="checkbox">
+							</div>
+							<div class="menu-divider"></div>
+							<h1 class="menu-title">Layout</h1>
+							<div id="layout-wrapper" class="menu-item-wrapper">
+								<span id="orientation-text">Horizontal</span>
+								<input id="layout-toggle" class="apple-switch" type="checkbox">
+							</div>
+							<div class="menu-divider"></div>
+							<div id="confetti-wrapper" class="menu-item-wrapper">
+								<span>Confetti</span>
+								<input id="confetti-toggle" class="apple-switch" type="checkbox">
+							</div>
+						</div>
+						<button id="menu-button" title="Menu" class="no-btn-style">
+							<svg id="menu-button-svg" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="white" d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"></path></svg>
+						</button>
+					</div>
+				</div>
+			</div>
+		{% else %}
+			<a id="login" href="{{loginOrOutUrl}}">Login</a>
+		{% endif %}
+	</div>
+</nav>

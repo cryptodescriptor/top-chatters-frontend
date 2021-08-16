@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema#",
+  "type" : "object",
+  "properties" : {
+    "starcount-schema" : {
+      "type" : "boolean"
+    },
+    "update-schema" : {
+      "type" : "boolean"
+    },
+    "delete-schema" : {
+      "type" : "boolean"
+    },
+    "streamer" : {
+      "type" : "string",
+      "minLength" : 1,
+      "maxLength" : 25
+    },
+    "_id" : {
+      "type" : "number"
+    },
+    "values" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 25
+        },
+        "star" : {
+          "type" : "string",
+          "enum" : [
+            "bikini", 
+            "bikini1", 
+            "bowler-tash", 
+            "bowler", 
+            "cat", 
+            "cool-beard", 
+            "cool-tash", 
+            "cool", 
+            "cute-cap", 
+            "cute", 
+            "devil", 
+            "hench", 
+            "nerd-beard", 
+            "nerd-tash", 
+            "nerd", 
+            "original", 
+            "party", 
+            "placeholder", 
+            "pout", 
+            "pout1", 
+            "pout2", 
+            "pout3", 
+            "pout4", 
+            "red-phat", 
+            "wooly-hat",
+            "duck"
+          ]
+        },
+        "color" : {
+          "type" : "string",
+          "pattern" : "^#[A-Fa-f0-9]{6}$"
+        }
+      },
+      "required" : ["name", "star", "color"],
+      "additionalProperties" : false
+    },
+    "inc" : {
+      "type": "number"
+    }
+  },
+  "required" : ["streamer"],
+  "dependencies" : {
+    "update-schema": ["values", "_id"],
+    "starcount-schema": ["inc", "_id"],
+    "delete-schema": ["_id"]
+  },
+  "additionalProperties" : false
+}

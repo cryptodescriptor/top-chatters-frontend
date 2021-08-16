@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-gb">
+<head>
+	<meta charset="utf-8"/>
+
+	<title>Top Twitch Chatters! Reward Your Viewers!</title>
+	<meta name="description" content="Reward your top Twitch chatters for their participation by giving them a special Gold Star!"/>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
+	<link rel="manifest" href="/static/favicons/site.webmanifest">
+	<link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#2d89ef">
+	<link rel="shortcut icon" href="/static/favicons/favicon.ico">
+	<meta name="msapplication-TileColor" content="#2d89ef">
+	<meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
+	<meta name="theme-color" content="#ffffff">
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-DGGTH2T8W3"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-DGGTH2T8W3');
+	</script>
+
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body class="{% if loggedIn %}logged-in{% endif %}">
+	<script type="text/javascript">
+		const starPage = false;
+		const loggedIn = {% if loggedIn %}true{% else %}false{% endif %};
+		const authenticated = false;
+		const displayName = '{{profile_data['display_name']}}';
+
+		var vertical = localStorage.getItem('vertical');
+
+		if (vertical !== null) {
+			vertical = vertical === 'true';
+		}
+	</script>
+
+	<div id="screen-blocker" class="display-none"></div>
+
+	{% include 'nav.html' %}
+
+	<section id="main-home">
+		<div id="main-nav">
+			<button type="button" id="intro-btn" class="no-btn-style">Intro</button>
+			<div id="nav-splitter"></div>
+			<button type="button" id="api-btn" class="no-btn-style">API</button>
+		</div>
+		{% include 'api.svg' %}
+		{% include 'browser.svg' %}
+	</section>
+
+	<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+	<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+	<script type="text/javascript">
+		goldStars = new GoldStars('{{baseURL}}', '{{baseURL}}/static/images');
+    	goldStars.init();
+	</script>
+</body>
+</html>

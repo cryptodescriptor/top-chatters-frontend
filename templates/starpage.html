@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="star-page" lang="en-gb">
+<head>
+	<meta charset="utf-8"/>
+
+	<title>{{streamer}}'s Top Twitch Chatters!</title>
+	<meta name="description" content="Reward your top Twitch chatters for their participation by giving them a special Gold Star!"/>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
+	<link rel="manifest" href="/static/favicons/site.webmanifest">
+	<link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#2d89ef">
+	<link rel="shortcut icon" href="/static/favicons/favicon.ico">
+	<meta name="msapplication-TileColor" content="#2d89ef">
+	<meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
+	<meta name="theme-color" content="#ffffff">
+
+	<link
+	  rel="stylesheet"
+	  href="https://unpkg.com/simplebar@latest/dist/simplebar.css"
+	/>
+	<script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script>
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-DGGTH2T8W3"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-DGGTH2T8W3');
+	</script>
+
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body class="hidden {% if loggedIn %}logged-in{% endif %}">
+	<script type="text/javascript">
+		const streamer = '{{streamer}}';
+		const displayName = '{{profile_data['display_name']}}';
+		const baseURL = '{{baseURL}}';
+		const loggedIn = {% if loggedIn %}true{% else %}false{% endif %};
+		const starPage = true;
+		const authenticated = {% if authenticated %}true{% else %}false{% endif %};
+		const emptyRecords = {% if empty %}true{% else %}false{% endif %};
+		const recordsPerTable = '{{recordsPerTable}}';
+
+		// We do this here to save rendering twice
+		var vertical = localStorage.getItem('vertical');
+
+		if (vertical !== null) {
+			vertical = vertical === 'true';
+      		if (vertical) {
+      			document.body.classList.add('vertical');
+      		}
+		}
+	</script>
+
+	<div id="loading">
+		<div class="page-loading__icon"></div>
+	</div>
+
+	<div id="screen-blocker" class="display-none"></div>
+
+	{% include 'nav.html' %}
+
+	<div id="crashClap-wrap">
+		<img src="" class="crash">
+		<img src="" class="clap">
+	</div>
+
+	<div class="popup-container display-none" data-simplebar>
+		<div class="popup-wrapper">
+			<div class="popup">
+				<button class="close no-btn-style" title="Close" tabindex="1">
+					<!-- Close -->
+					<svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path fill="white" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+				</button>
+
+				<h1 class="popup-title">Edit Person</h1>
+
+				<form id="update-form">
+					<label for="form-name">Name:</label>
+					<input type="text" id="form-name" name="form-name" spellcheck="false" autocomplete="off" required="true" minlength="1" maxlength="25">
+
+					<label id="form-colour-label" for="form-colour">Colour:</label>
+					<input id="form-colour" name="form-colour" type="color">
+
+					<div id="tw-colours" role="radiogroup" aria-label="Twitch Default Colours"></div>
+
+					<label for="form-stars">Select a Star:</label>
+					<div id="form-stars" role="radiogroup"></div>
+
+					<a id="form-delete" class="display-none" href="#">Delete Person</a>
+
+					<input id="form-id" name="form-id" type="hidden" value="0">
+
+					<button id="form-done" title="Done">Done</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<section id="main">
+		<object class="explosion-svg hidden" type="image/svg+xml" data="{{ url_for('static', filename='images/explosion.svg') }}"></object>
+
+		<table class="star-table">
+			{% for record in records %}
+				<tr {% if record._id > 0 %}id="{{record._id|int}}"{% endif %} data-row-index="{{loop.index0}}" {% if record.last %}class="last-record"{% endif %}>
+					<td class="rank">#{{loop.index}}</td>
+					<td class="name">
+						<span class="person-name" style="color: {{record.color if record.color else '#000000'}};">{{record.name}}</span>
+						{% if authenticated %}
+						<button class="edit no-btn-style" title="Edit">
+							<!-- Edit SVG -->
+							<svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z"></path></svg>
+						</button>
+						{% endif %}
+					</td>
+					<td class="stars">
+						<div class="star-wrapper">
+							<img src="" class="star {{record.star}}" data-star-name="{{record.star}}"> <span class="amount">{% if record.amount %}x {{record.amount|int}}{% endif%}</span>
+						</div>
+						<div class="plus-or-minus-1"></div>
+						{% if authenticated %}
+						<div class="controls">
+							<button class="add no-btn-style" title="Add Star">
+								<!-- Caret Up -->
+								<svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M288.662 352H31.338c-17.818 0-26.741-21.543-14.142-34.142l128.662-128.662c7.81-7.81 20.474-7.81 28.284 0l128.662 128.662c12.6 12.599 3.676 34.142-14.142 34.142z"></path></svg>
+							</button>
+							<button class="remove no-btn-style" title="Remove Star">
+								<!-- Caret Down -->
+								<svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"></path></svg>
+							</button>
+						</div>
+						{% endif %}
+					</td>
+				</tr>
+				{% if (loop.index % recordsPerTable) == 0 and not loop.last %}
+					</table><table class="star-table">
+				{% endif %}
+			{% endfor %}
+		</table>
+	</section>
+
+	<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+	{% if authenticated %}
+	<script src="{{ url_for('static', filename='js/authedTr.js') }}"></script>
+	{% endif %}
+	<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/preload.js') }}"></script>
+</body>
+</html>
