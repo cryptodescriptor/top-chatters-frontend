@@ -358,7 +358,7 @@ class GoldStars {
     this.closePopup();
     this.hideLoading();
     this.scrollToPersonIfNeeded(newRecordTr);
-    this.delayedBoobaExplosion(newRecordTr, 50);
+    this.delayedBoobaExplosion(newRecordTr, 150);
   }
 
   updateRemoveListenerData(recordTr, data) {
@@ -375,7 +375,7 @@ class GoldStars {
     this.rePaintRecord(recordTr, data, false);
     this.closePopup();
     this.hideLoading();
-    this.delayedBoobaExplosion(recordTr, 50);
+    this.delayedBoobaExplosion(recordTr, 150);
     this.updateRemoveListenerData(recordTr, data);
   }
 
