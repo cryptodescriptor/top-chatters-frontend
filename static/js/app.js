@@ -317,8 +317,9 @@ class GoldStars {
   }
 
   createNewTableIfNeeded(newRecordDataIndex) {
-    let count = newRecordDataIndex+1;
-    if (count % recordsPerTable === 0) {
+    let recordsCount = newRecordDataIndex+1;
+    let initialThreeTablesFull = recordsCount >= recordsPerTable*3;
+    if (initialThreeTablesFull && recordsCount % recordsPerTable === 0) {
       this.createNewTable(newRecordDataIndex);
     }
   }
