@@ -331,7 +331,16 @@ class GoldStars {
     }, delay);
   }
 
+  showLoading() {
+    this.e.loading.classList.remove('display-none');
+  }
+
+  hideLoading() {
+    this.e.loading.classList.add('display-none');
+  }
+
   addNewRecord(data) {
+    this.showLoading();
     let lastRecordTr = document.querySelector('.last-record') || null;
     let newRecord = this.getNewRecord(lastRecordTr);
     let newRecordTr = newRecord[0];
@@ -346,6 +355,7 @@ class GoldStars {
 
     this.createNewTableIfNeeded(newRecordDataIndex);
     this.closePopup();
+    this.hideLoading();
     this.scrollToPersonIfNeeded(newRecordTr);
     this.delayedBoobaExplosion(newRecordTr, 250);
   }
@@ -359,14 +369,16 @@ class GoldStars {
   }
 
   editRecord(data) {
+    this.showLoading();
     let recordID = this.e.updateForm.querySelector('#form-id').value;
     let recordTr = document.getElementById(recordID);
     this.rePaintRecord(recordTr, data, false);
     this.closePopup();
+    this.hideLoading();
     this.delayedBoobaExplosion(recordTr, 250);
     this.updateRemoveListenerData(recordTr, data);
   }
-
+  
   updateSubmitListener() {
     this.e.updateForm.addEventListener('submit', (ev) => {
       ev.preventDefault();
