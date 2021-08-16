@@ -228,6 +228,7 @@ class GoldStars {
   }
 
   updatePerson(vals) {
+    this.showLoading();
     return fetch(this.baseURL + '/api/update', {
       method: 'POST',
       headers: {
@@ -340,7 +341,6 @@ class GoldStars {
   }
 
   addNewRecord(data) {
-    this.showLoading();
     let lastRecordTr = document.querySelector('.last-record') || null;
     let newRecord = this.getNewRecord(lastRecordTr);
     let newRecordTr = newRecord[0];
@@ -369,7 +369,6 @@ class GoldStars {
   }
 
   editRecord(data) {
-    this.showLoading();
     let recordID = this.e.updateForm.querySelector('#form-id').value;
     let recordTr = document.getElementById(recordID);
     this.rePaintRecord(recordTr, data, false);
@@ -378,7 +377,7 @@ class GoldStars {
     this.delayedBoobaExplosion(recordTr, 250);
     this.updateRemoveListenerData(recordTr, data);
   }
-  
+
   updateSubmitListener() {
     this.e.updateForm.addEventListener('submit', (ev) => {
       ev.preventDefault();
