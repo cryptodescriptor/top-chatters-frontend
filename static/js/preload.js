@@ -35,7 +35,8 @@ fetch(baseURL + '/api/stars', {'cache': 'no-cache'})
     images[baseImgURL + '/stars/' + fName + '.svg'] = fName;
   });
 
-  images[baseImgURL + '/crash.png'] = 'crash';
+  images[baseImgURL + '/baffyPog.png'] = 'baffyPog';
+  images[baseImgURL + '/baffyCrash.png'] = 'baffyCrash';
   images[baseImgURL + '/clapping.gif'] = 'clap';
 
   preloadImages(images, () => {

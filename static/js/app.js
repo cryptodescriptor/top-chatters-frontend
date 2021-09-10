@@ -46,7 +46,9 @@ class GoldStars {
       'tables' : document.querySelectorAll('.star-table'),
       'nav' : document.querySelector('nav'),
       'mainExplosion' : document.querySelector('.explosion-svg'),
-      'crashClapWrap' : document.querySelector('#crashClapWrap-wrap'),
+      'emoteWrapper' : document.querySelector('#emote-wrapper'),
+      'baffyCrash' : document.querySelector('.baffyCrash'),
+      'baffyPog' : document.querySelector('.baffyPog'),
       'loading' : document.querySelector('#loading')
     }
 
@@ -75,8 +77,6 @@ class GoldStars {
 
     this.MAX_STAR_COUNT = 999999;
     this.MIN_STAR_COUNT = 1;
-
-    this.crashAnimComplete = true;
 
     if (authenticated) {
       this.baseTr = this.htmlToElement(authedTr);
@@ -622,10 +622,10 @@ class GoldStars {
     return Math.random() * (max - min) + min;
   }
 
-  throwConfetti(duration, conf, xyList, intervalMs) {
+  throwConfetti(durationMs, conf, xyList, intervalMs) {
     if (!this.confettiEnabled) return;
 
-    let animationEnd = Date.now() + duration;
+    let animationEnd = Date.now() + durationMs;
     let interval;
 
     function intervalFunc() {
@@ -635,7 +635,7 @@ class GoldStars {
         return clearInterval(interval);
       }
 
-      let particleCount = 100 * (timeLeft / duration);
+      let particleCount = 100 * (timeLeft / durationMs);
       // since particles fall down, start a bit higher than random
       xyList.forEach((xy) => {
         confetti(Object.assign({}, conf, {
@@ -652,13 +652,13 @@ class GoldStars {
   }
 
   fullScreenConfetti() {
-    let duration = 4 * 1000;
-    let conf = { startVelocity: 40, spread: 780, ticks: 60, zIndex: 1 };
+    let durationMs = 4000;
+    let conf = { startVelocity: 40, spread: 800, ticks: 60, zIndex: 1 };
     let xyList = [
       [this.randomInRange.bind(null, 0.1, 0.3), function() {Math.random() - 0.2}],
       [this.randomInRange.bind(null, 0.7, 0.9), function() {Math.random() - 0.2}]
     ];
-    this.throwConfetti(duration, conf, xyList, 260);
+    this.throwConfetti(durationMs, conf, xyList, 280);
   }
 
   getViewWidth() {
@@ -670,7 +670,7 @@ class GoldStars {
   }
 
   trConfetti(tr) {
-    let duration = .2 * 1000; /* Smaller duration than booba explosion */
+    let durationMs = .2 * 1000; /* Smaller duration than booba explosion */
     let conf = { startVelocity: 40, spread: 40, ticks: 60, zIndex: 1, scalar: .8 };
     let controlsRect = tr.querySelector('.controls').getBoundingClientRect();
     let viewWidth = this.getViewWidth();
@@ -680,7 +680,7 @@ class GoldStars {
       [(controlsRect.left+controlsCenter)/viewWidth,
       (controlsRect.bottom-20)/viewHeight]
     ];
-    this.throwConfetti(duration, conf, xyList, 250);
+    this.throwConfetti(durationMs, conf, xyList, 250, 0);
   }
 
   rePaintRow(item, tr) {
@@ -699,8 +699,8 @@ class GoldStars {
     if (clickedAndMoved) this.scrollToPersonIfNeeded(tr);
 
     if (clickedAndGainedRank) {
-      this.revealCrash();
-      this.fullScreenConfetti();
+      this.revealEmote('baffyCrash');
+      this.fullScreenConfetti(4000);
       this.blinkAnimation(true, tr);
       this.playSound('yay');
     } else if (clickedAndDroppedRank) {
@@ -747,9 +747,7 @@ class GoldStars {
     let amountWidth = tr.querySelector('.amount').getBoundingClientRect().width;
     let totWidth = starWidth + amountWidth;
     plusOrMinusOne.style.left = 'calc(50% + ' + (totWidth - 4) +'px/2)';
-    plusOrMinusOne.addEventListener('animationend', () => { 
-      this.resetAnimation(plusOrMinusOne, 'reveal');
-    }, {'once': true});
+    this.resetAnimation(plusOrMinusOne, 'reveal');
     plusOrMinusOne.classList.add('reveal');
   }
 
@@ -777,16 +775,22 @@ class GoldStars {
     this.revealExplosion(svg);
   }
 
-  revealCrash() {
-    this.e.crashClapWrap.addEventListener('animationend', () => {
-      this.resetAnimation(this.e.crashClapWrap, 'zoom');
-      this.crashAnimComplete = true;
-    }, {'once': true});
-    this.crashAnimComplete = false;
-    this.e.crashClapWrap.classList.add('zoom');
+  hideEmotesExcept(emote) {
+    this.e.emoteWrapper.querySelectorAll('.emote').forEach((el) => {
+      if (el.classList.contains(emote)) return;
+      el.style.height = '0px';
+    });
   }
 
-  incrementAmount(item, amount, tr) {
+  revealEmote(emote) {
+    this.resetAnimation(this.e.emoteWrapper, 'zoom');
+    this.hideEmotesExcept(emote);
+    this.e[emote].style.height = '100%';
+    this.currentEmote = emote;
+    this.e.emoteWrapper.classList.add('zoom');
+  }
+
+  incrementAmount(item, amount, tr, personRankingAbove) {
     item.inc++;
     item.amount++;
     amount.innerText = 'x ' + item.amount;
@@ -794,6 +798,21 @@ class GoldStars {
 
     this.playSound('booba');
     this.showExplosion(tr);
+
+    let animationCount = 0;
+    let goingToRankUp = item.amount > personRankingAbove.amount;
+
+    function trAnimEnd() {
+      animationCount++;
+      if (animationCount === 2) {
+        tr.removeEventListener('animationend', bind);
+        if (!goingToRankUp) this.revealEmote('baffyPog');
+      }
+    }
+
+    let bind = trAnimEnd.bind(this);
+
+    tr.addEventListener('animationend', bind);
 
     if (window.matchMedia('(min-width: 1200px)').matches) {
       this.trConfetti(tr);
@@ -818,10 +837,11 @@ class GoldStars {
     let amount = ev.target.closest('.stars').querySelector('.amount');
     let tr = ev.target.closest('tr');
 
-    if (ev.target.closest('button').classList.contains('add') && 
+    if (ev.target.closest('button').classList.contains('add') &&
         item.amount !== this.MAX_STAR_COUNT) {
-      this.incrementAmount(item, amount, tr);
-    } else if (ev.target.closest('button').classList.contains('remove') && 
+      let personRankingAbove = this.addRemoveListenerData[ind-1];
+      this.incrementAmount(item, amount, tr, personRankingAbove);
+    } else if (ev.target.closest('button').classList.contains('remove') &&
         item.amount !== this.MIN_STAR_COUNT) {
       this.decrementAmount(item, amount, tr);
     }
