@@ -790,6 +790,10 @@ class GoldStars {
     this.e.emoteWrapper.classList.add('zoom');
   }
 
+  isGoingToRankUp(personRankingAbove, item) {
+    return (personRankingAbove !== undefined) ? item.amount > personRankingAbove.amount : false;
+  }
+
   incrementAmount(item, amount, tr, personRankingAbove) {
     item.inc++;
     item.amount++;
@@ -800,7 +804,7 @@ class GoldStars {
     this.showExplosion(tr);
 
     let animationCount = 0;
-    let goingToRankUp = item.amount > personRankingAbove.amount;
+    let goingToRankUp = this.isGoingToRankUp(personRankingAbove, item);
 
     function trAnimEnd() {
       animationCount++;
