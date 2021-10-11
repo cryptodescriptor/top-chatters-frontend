@@ -607,6 +607,11 @@ input.apple-switch:checked:after {
 		width: 50%;
 	}
 
+	/* Seperator Line */
+	body:not(.vertical) .star-table tr:last-of-type > td {
+		border-bottom: solid 1px #0064a6;
+	}
+
 	body:not(.vertical) .stars {
 		width: 45%;
 		border-right: solid 1px var(--border-color);
