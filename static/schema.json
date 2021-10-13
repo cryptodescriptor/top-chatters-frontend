@@ -31,6 +31,7 @@
           "type" : "string",
           "enum" : [
             "alien", 
+            "angel", 
             "bikini", 
             "bikini1", 
             "bowler-tash", 
