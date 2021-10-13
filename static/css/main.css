@@ -839,11 +839,11 @@ tr:hover .edit {
 }
 
 #form-stars input:checked + label > img {
-	background-color: black;
+	background-color: hsl(0, 0%, 10%);
 }
 
 #form-stars input:not(:checked):hover + label > img {
-	background-color: hsl(0, 0%, 63%);
+	background-color: hsl(0, 0%, 60%);
 }
 
 #form-stars label {
