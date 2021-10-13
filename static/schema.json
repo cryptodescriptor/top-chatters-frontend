@@ -30,6 +30,7 @@
         "star" : {
           "type" : "string",
           "enum" : [
+            "alien", 
             "bikini", 
             "bikini1", 
             "bowler-tash", 
